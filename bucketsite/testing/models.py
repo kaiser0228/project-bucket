@@ -7,6 +7,7 @@ class ListItem(models.Model):
     author = models.CharField(max_length = 100)
     votes = models.PositiveIntegerField(default = 0)
     pub_date = models.DateTimeField("published date", default = timezone.now())
+    img = models.ImageField(upload_to = 'imgs/', default = 'placeholder.png')
 
     def __str__(self):
         return self.title

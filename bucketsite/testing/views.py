@@ -1,17 +1,36 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
+from .models import ListItem
+from django.views import generic
+from .form import NameForm
+from django.urls import reverse
 # Create your views here.
-from django.http import HttpResponse
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+class IndexView(generic.ListView):
+    template_name = "testing/index.html"
+    context_object_name = "latest_list_item"
 
-def detail(request, question_id):
-    return HttpResponse("You're looking at question %s." % question_id)
+    def get_queryset(self):
+        return ListItem.objects.order_by('-votes')
 
-def results(request, question_id):
-    response = "You're looking at the results of question %s."
-    return HttpResponse(response % question_id)
+def get_name(request):
+    try:
+        selected_choice = ListItem(title=request.POST['submission'], author = "anon")
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the question voting form.
+        print("Bad")
+    else:
+        selected_choice.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse("testing:index"))
 
-def vote(request, question_id):
-    return HttpResponse("You're voting on question %s." % question_id)
+def upvote(request):
+        selected_choice = ListItem.objects.get(id=request.POST['choice'])
+        selected_choice.votes += 1
+        selected_choice.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse("testing:index"))

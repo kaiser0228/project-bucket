@@ -1,0 +1,85 @@
+{% load static %}
+
+
+
+<html>
+    <head>
+        <title>BucketMe</title>
+        <link rel="stylesheet" href="{% static 'testing/style.css' %}" />
+        <link rel="stylesheet" href="{% static 'testing/uikit.min.css' %}" />
+        <script src="{% static 'testing/uikit.min.js' %}"></script>
+        <script src="{% static 'testing/uikit-icons.min.js' %}"></script>
+    </head>
+    <body>
+
+      <div class"uk-container uk-offcanvas-content">
+        {% if latest_list_item %}
+
+            {% for post in latest_list_item %}
+            <div class = "uk-card uk-card-default uk-width-1-2@m uk-background-cover" style="background-image: url({{ post.image }}); margin: .3em .3em 0 0">
+              <div class="uk-card-header">
+                  <div>
+                    <h3 class="uk-card-title uk-margin-remove-bottom">{{ post.title }}</h3>
+                    <p class="uk-text-meta uk-margin-remove-top">Submitted by {{post.author}}</p>
+                    <div class="uk-card-badge uk-label">{{ post.votes }}</div>
+
+                    <form action="{% url 'testing:vote' %}" method="post">
+                      {% csrf_token %}
+                      <div class="uk-position-right uk-animation-toggle" style="background-color: #6de09f">
+                        <button type="submit" value="{{ post.id }}" name="choice" id="{{ forloop.counter }}" style="color:white; margin-top: 2em; cursor: pointer" class="uk-animation-fade" uk-icon="arrow-up"></button>
+                      </div>
+                    </form>
+
+
+                  </div>
+
+              </div>
+            </div>
+            {% endfor %}
+
+
+        {% else %}
+            <p>No polls are available.</p>
+        {% endif %}
+        <div id="offcanvas-block" style="cursor: pointer; margin-top: .3em" class = "uk-card uk-card-hover uk-card-default uk-width-1-2@m uk-background-cover" type="button" uk-toggle="target: #offcanvas-usage">
+          <div class="uk-card-header uk-animation-toggle">
+            <div class="uk-animation-shake">
+              <h3 class="uk-card-title uk-margin-remove-bottoms">Got an idea?</h3>
+            </div>
+          </div>
+        </div>
+
+    <!-- The whole page content goes here -->
+
+        <div "uk-width-2-2@m uk-background-cover">
+        </div>
+
+        <div id="offcanvas-usage" uk-modal="overlay: true">
+            <div class="uk-modal-dialog uk-modal-body">
+
+                <button class="uk-modal-close" type="button" uk-close></button>
+
+                <h3>Add a new item</h3>
+
+                <form action="{% url 'testing:valid' %}" method="post">
+                {% csrf_token %}
+                <div class="uk-margin">
+                    <div class="uk-inline">
+
+                        <span class="uk-form-icon" uk-icon="icon: plus"></span>
+                        <!-- adding here -->
+                        <input class="uk-input" type="text" name="submission">
+
+                    </div>
+                  </div>
+                </form>
+
+            </div>
+          </div>
+
+
+
+        </div>
+
+    </body>
+</html>
